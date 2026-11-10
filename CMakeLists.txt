@@ -35,6 +35,14 @@ qt_add_qml_module(graphai
             ui/Main.qml
 )
 
+qt_add_resources(graphai bible_data
+        PREFIX "/" BASE data
+        FILES
+            assets/nkjv.beve
+        OPTIONS
+            -no-compress
+)
+
 target_link_libraries(graphai PRIVATE
         Qt6::Quick
         glaze::glaze

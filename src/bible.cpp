@@ -1,14 +1,23 @@
 #include "bible.hpp"
-Bible::Bible(QList<Book> books) : books_(std::move(books))
+#include <QResource>
+#include <glaze/glaze.hpp>
+
+Bible::Bible(std::vector<Book> books) : books_(std::move(books))
 {
 }
-
-Bible Bible::testBible()
+Bible Bible::fromBeve(std::string_view beve)
 {
-    return Bible({Book{.name = "Skibidians", .chapters = {{"dial", "maybe"}, {"actually not!", "i dont agree"}}},
-                  Book{.name = "Romans",
-                       .chapters = {{"You are Peter, and on this rock you shall found a church that goes against all "
-                                     "of my teachings :)"}}}});
+    auto books = std::vector<Book>();
+    if (auto ec = glz::read_beve(books, beve); ec)
+        throw std::runtime_error("Failed to read BEVE: " + glz::format_error(ec, beve));
+    return Bible(std::move(books));
+}
+
+Bible Bible::nkjv()
+{
+    auto rawBeve = QResource(":/assets/nkjv.beve");
+    auto buf = std::string_view((const char*)rawBeve.data(), rawBeve.size());
+    return fromBeve(buf);
 }
 
 int Bible::bookCount() const

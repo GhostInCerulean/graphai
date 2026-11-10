@@ -42,7 +42,7 @@ ApplicationWindow {
                 Layout.fillHeight: true
                 model: root.bible.verses
                 clip: true
-                delegate: Text {
+                delegate: Label {
                     required property int verseNumber
                     required property string verseText
                     width: ListView.view.width

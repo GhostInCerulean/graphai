@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, [] { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
-    auto bible = Bible::testBible();
+    auto bible = Bible::nkjv();
     auto vm = BibleViewModel(bible);
 
     engine.setInitialProperties({{"bible", QVariant::fromValue(&vm)}});

@@ -10,11 +10,12 @@ struct Book
 
 class Bible
 {
-    QList<Book> books_;
+    std::vector<Book> books_;
 
   public:
-    explicit Bible(QList<Book> books);
-    static Bible testBible();
+    explicit Bible(std::vector<Book> books);
+    static Bible fromBeve(std::string_view beve);
+    static Bible nkjv();
 
     int bookCount() const;
     const Book &book(int i) const;

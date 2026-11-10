@@ -1,0 +1,45 @@
+cmake_minimum_required(VERSION 4.4)
+project(graphai)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+
+include(cmake/CPM.cmake)
+
+CPMAddPackage(
+        NAME glaze
+        URL https://github.com/stephenberry/glaze/archive/refs/tags/v9.1.0.tar.gz
+        VERSION 6.7
+)
+
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES 6.5)
+
+qt_add_executable(graphai
+        src/main.cpp
+        src/bible.cpp
+        src/bible.hpp
+        src/book_model.cpp
+        src/book_model.hpp
+        src/verse_model.cpp
+        src/verse_model.hpp
+        src/bible_view_model.cpp
+        src/bible_view_model.hpp
+)
+
+qt_add_qml_module(graphai
+        URI App
+        VERSION 1.0
+        QML_FILES
+            ui/Main.qml
+)
+
+target_link_libraries(graphai PRIVATE
+        Qt6::Quick
+        glaze::glaze
+)
+
+target_include_directories(graphai PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)

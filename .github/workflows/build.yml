@@ -77,7 +77,7 @@ jobs:
             build/packages/*.rpm
             build/packages/*.tar.gz
             build/packages/*.zip
-            build/packages/*.exe
+            build/packages/*.msi
             build/packages/*.dmg
           if-no-files-found: error
 

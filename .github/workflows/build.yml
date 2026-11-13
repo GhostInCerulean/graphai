@@ -1,0 +1,119 @@
+name: Build and package
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop:
+    name: Desktop (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            qt-host: linux
+            qt-arch: linux_gcc_64
+            artifact: linux
+          - os: windows-2022
+            qt-host: windows
+            qt-arch: win64_msvc2022_64
+            artifact: windows
+          - os: macos-14
+            qt-host: mac
+            qt-arch: clang_64
+            artifact: macos
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.3"
+          host: ${{ matrix.qt-host }}
+          target: desktop
+          arch: ${{ matrix.qt-arch }}
+          cache: true
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -p package
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            7z a "package/graphai-${{ matrix.artifact }}.zip" build/Release/graphai.exe
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            ditto -c -k --sequesterRsrc --keepParent build/graphai.app "package/graphai-${{ matrix.artifact }}.zip"
+          else
+            tar -czf "package/graphai-${{ matrix.artifact }}.tar.gz" -C build graphai
+          fi
+
+      - name: Upload desktop artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: graphai-${{ matrix.artifact }}
+          path: package/*
+          if-no-files-found: error
+
+  android:
+    name: Android APK
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Qt for Android
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.3"
+          host: all_os
+          target: android
+          arch: android_arm64_v8a
+          cache: true
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        run: |
+          sdkmanager "ndk;26.1.10909125"
+          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/26.1.10909125" >> "$GITHUB_ENV"
+
+      - name: Configure
+        run: |
+          "$QT_ROOT_DIR/bin/qt-cmake" \
+            -S . -B build-android -G Ninja \
+            -DANDROID_SDK_ROOT="$ANDROID_HOME" \
+            -DANDROID_NDK_ROOT="$ANDROID_NDK_ROOT" \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build APK
+        run: cmake --build build-android --target apk --parallel
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: graphai-android
+          path: build-android/android-build/build/outputs/apk/**/*.apk
+          if-no-files-found: error

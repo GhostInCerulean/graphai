@@ -16,6 +16,14 @@ CPMAddPackage(
 find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
 qt_standard_project_setup(REQUIRES 6.5)
 
+if(ANDROID)
+    set_target_properties(graphai PROPERTIES
+            QT_ANDROID_PACKAGE_NAME "com.example.graphai"
+            QT_ANDROID_VERSION_CODE 1
+            QT_ANDROID_VERSION_NAME "1.0"
+    )
+endif()
+
 qt_add_executable(graphai
         src/main.cpp
         src/bible.cpp

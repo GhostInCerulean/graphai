@@ -5,11 +5,16 @@
 Bible::Bible(std::vector<Book> books) : books_(std::move(books))
 {
 }
+
 Bible Bible::fromBeve(std::string_view beve)
 {
+    auto start = std::chrono::steady_clock::now();
     auto books = std::vector<Book>();
     if (auto ec = glz::read_beve(books, beve); ec)
         throw std::runtime_error("Failed to read BEVE: " + glz::format_error(ec, beve));
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    qDebug() << "Loaded BEVE by " << duration.count() << "ms";
     return Bible(std::move(books));
 }
 

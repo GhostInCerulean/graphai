@@ -24,7 +24,7 @@ jobs:
             qt-host: windows
             qt-arch: win64_msvc2022_64
             artifact: windows
-          - os: macos-14
+          - os: macos-latest
             qt-host: mac
             qt-arch: clang_64
             artifact: macos

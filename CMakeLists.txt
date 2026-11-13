@@ -38,6 +38,10 @@ if (ANDROID)
     )
 endif ()
 
+if(APPLE)
+    set_target_properties(graphai PROPERTIES MACOSX_BUNDLE TRUE)
+endif()
+
 qt_add_qml_module(graphai
         URI App
         VERSION 1.0

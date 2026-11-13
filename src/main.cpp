@@ -13,6 +13,10 @@ int main(int argc, char *argv[])
     timer.start();
 
     QGuiApplication app(argc, argv);
+    QGuiApplication::setApplicationName("graphai");
+    QGuiApplication::setApplicationDisplayName("Graphai");
+    QGuiApplication::setWindowIcon(QIcon(":/icons/icon.png"));
+    QGuiApplication::setDesktopFileName("graphai");
 
     QQmlApplicationEngine engine;
     QObject::connect(

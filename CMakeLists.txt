@@ -57,6 +57,11 @@ qt_add_resources(graphai bible_data
         -no-compress
 )
 
+qt_add_resources(graphai app_icon
+        PREFIX "/icons" BASE assets
+        FILES assets/icon.png
+)
+
 target_link_libraries(graphai PRIVATE
         Qt6::Quick
         glaze::glaze
@@ -65,6 +70,20 @@ target_link_libraries(graphai PRIVATE
 target_include_directories(graphai PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+if (WIN32)
+    target_sources(graphai PRIVATE packaging/windows/graphai.rc)
+    set_target_properties(graphai PROPERTIES WIN32_EXECUTABLE TRUE)  # no console window
+endif ()
+
+if (APPLE)
+    set(MACOSX_ICON ${CMAKE_CURRENT_SOURCE_DIR}/packaging/macos/graphai.icns)
+    target_sources(graphai PRIVATE ${MACOSX_ICON})
+    set_source_files_properties(${MACOSX_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    set_target_properties(graphai PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_ICON_FILE graphai.icns)
+endif ()
 
 if (NOT ANDROID)
     include(GNUInstallDirs)
@@ -80,14 +99,14 @@ if (NOT ANDROID)
     )
     install(SCRIPT ${graphai_deploy_script})
 
-    set(CPACK_PACKAGE_NAME "GraphAI")
-    set(CPACK_PACKAGE_VENDOR "GraphAI")
-    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GraphAI")
+    set(CPACK_PACKAGE_NAME "Graphai")
+    set(CPACK_PACKAGE_VENDOR "Graphai")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Graphai")
     set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "GraphAI")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Graphai")
 
     # Creates a Start Menu shortcut in the Windows NSIS installer.
-    set(CPACK_PACKAGE_EXECUTABLES "graphai" "GraphAI")
+    set(CPACK_PACKAGE_EXECUTABLES "graphai" "Graphai")
 
     if (WIN32)
         set(CPACK_GENERATOR "NSIS;ZIP")
@@ -96,13 +115,20 @@ if (NOT ANDROID)
     else ()
         set(CPACK_GENERATOR "DEB;RPM;TGZ")
 
-        set(CPACK_DEBIAN_PACKAGE_MAINTAINER "GraphAI maintainers")
+        set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Graphai maintainers")
         set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
         set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
         set(CPACK_RPM_PACKAGE_LICENSE "Proprietary")
     endif ()
 
+    install(FILES packaging/linux/graphai.desktop
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+
+    install(FILES packaging/linux/graphai.svg
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
+
     set(CPACK_PACKAGE_DIRECTORY "${CMAKE_BINARY_DIR}/packages")
+    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
     include(CPack)
 endif ()

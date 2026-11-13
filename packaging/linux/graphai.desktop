@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Graphai
+Comment=Bible reader
+Exec=graphai
+Icon=graphai
+Terminal=false
+Categories=Utility;Education;
+StartupWMClass=graphai

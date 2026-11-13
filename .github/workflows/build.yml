@@ -24,7 +24,7 @@ jobs:
             qt-host: windows
             qt-arch: win64_msvc2022_64
             artifact: windows
-          - os: macos-latest
+          - os: macos-15
             qt-host: mac
             qt-arch: clang_64
             artifact: macos
@@ -33,6 +33,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Install CMake 4
+        run: python -m pip install cmake==4.0.3
+
+      - name: Install Linux package tools
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build dpkg-dev rpm
+
+      - name: Install NSIS
+        if: runner.os == 'Windows'
+        run: choco install nsis -y
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
@@ -49,23 +62,14 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel
 
-      - name: Package
-        shell: bash
-        run: |
-          mkdir -p package
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            7z a "package/graphai-${{ matrix.artifact }}.zip" build/Release/graphai.exe
-          elif [ "$RUNNER_OS" = "macOS" ]; then
-            ditto -c -k --sequesterRsrc --keepParent build/graphai.app "package/graphai-${{ matrix.artifact }}.zip"
-          else
-            tar -czf "package/graphai-${{ matrix.artifact }}.tar.gz" -C build graphai
-          fi
+      - name: Create CPack packages
+        run: cpack --config build/CPackConfig.cmake --verbose
 
-      - name: Upload desktop artifact
+      - name: Upload desktop packages
         uses: actions/upload-artifact@v4
         with:
           name: graphai-${{ matrix.artifact }}
-          path: package/*
+          path: build/*
           if-no-files-found: error
 
   android:
@@ -76,6 +80,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Install CMake 4
+        run: python -m pip install cmake==4.0.3
 
       - name: Install Qt for Android
         uses: jurplel/install-qt-action@v4
@@ -95,8 +102,7 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
         with:
-          packages: platform-tools
-
+          packages: platform-tools platforms;android-35 build-tools;35.0.0
 
       - name: Install Android NDK
         run: |

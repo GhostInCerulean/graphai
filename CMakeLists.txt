@@ -103,5 +103,6 @@ if (NOT ANDROID)
         set(CPACK_RPM_PACKAGE_LICENSE "Proprietary")
     endif ()
 
+    set(CPACK_PACKAGE_DIRECTORY "${CMAKE_BINARY_DIR}/packages")
     include(CPack)
 endif ()

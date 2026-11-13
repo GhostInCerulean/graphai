@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: graphai-${{ matrix.artifact }}
-          path: build/*
+          path: build/packages/*
           if-no-files-found: error
 
   android:

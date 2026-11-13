@@ -118,6 +118,13 @@ jobs:
           sdkmanager "ndk;27.2.12479018"
           echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/27.2.12479018" >> "$GITHUB_ENV"
 
+      - name: Fix Qt permissions
+        run: |
+          chmod +x "$QT_ROOT_DIR"/bin/* || true
+          chmod +x "$QT_ROOT_DIR"/libexec/* || true
+          chmod +x "$QT_HOST_PATH"/bin/* || true
+          chmod +x "$QT_HOST_PATH"/libexec/* || true
+
       - name: Configure
         run: |
           "$QT_ROOT_DIR/bin/qt-cmake" \

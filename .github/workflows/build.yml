@@ -43,9 +43,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ninja-build dpkg-dev rpm
 
-      - name: Install NSIS
+      - name: Install WiX
         if: runner.os == 'Windows'
-        run: choco install nsis -y
+        shell: pwsh
+        run: |
+          choco install wixtoolset -y
+          "C:\Program Files (x86)\WiX Toolset v3.14\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4

@@ -69,7 +69,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: graphai-${{ matrix.artifact }}
-          path: build/packages/*
+          path: |
+            build/packages/*.deb
+            build/packages/*.rpm
+            build/packages/*.tar.gz
+            build/packages/*.zip
+            build/packages/*.exe
+            build/packages/*.dmg
           if-no-files-found: error
 
   android:

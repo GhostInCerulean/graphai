@@ -99,7 +99,7 @@ jobs:
           version: "6.8.3"
           host: all_os
           target: android
-          arch: android_arm64_v8a
+          arch: android_armv7
           cache: true
 
       - name: Set up Java

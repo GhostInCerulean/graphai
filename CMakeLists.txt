@@ -28,6 +28,14 @@ qt_add_executable(graphai
         src/bible_view_model.hpp
         src/utils/bench.cpp
         src/utils/bench.hpp
+        src/utils/timing.cpp
+        src/utils/timing.hpp
+        src/utils/scoped_timer.cpp
+        src/utils/scoped_timer.hpp
+        src/utils/windows.cpp
+        src/utils/windows.hpp
+        src/utils/logging.cpp
+        src/utils/logging.hpp
 )
 
 if (ANDROID)

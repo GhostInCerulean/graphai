@@ -1,4 +1,7 @@
 #include "bible.hpp"
+
+#include "utils/scoped_timer.hpp"
+
 #include <QResource>
 #include <glaze/glaze.hpp>
 
@@ -8,11 +11,11 @@ Bible::Bible(std::vector<Book> books) : books_(std::move(books))
 
 Bible Bible::fromBeve(std::string_view beve)
 {
-    auto start = std::chrono::steady_clock::now();
+    auto timer = graphai::ScopedTimer("Bible::fromBeve");
+
     auto books = std::vector<Book>();
     if (auto ec = glz::read_beve(books, beve); ec)
         throw std::runtime_error("Failed to read BEVE: " + glz::format_error(ec, beve));
-    auto end = std::chrono::steady_clock::now();
 
     return Bible(std::move(books));
 }

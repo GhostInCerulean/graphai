@@ -6,11 +6,17 @@
 #include "bible.hpp"
 #include "bible_view_model.hpp"
 #include "utils/bench.hpp"
+#include "utils/logging.hpp"
+#include "utils/windows.hpp"
 
 int main(int argc, char *argv[])
 {
+    // the timer to tell the time from the first line of main to the first frame
     auto timer = QElapsedTimer();
     timer.start();
+
+    graphai::attachToParentConsoleOnWindows();
+    graphai::setupLogging();
 
     QGuiApplication app(argc, argv);
     QGuiApplication::setApplicationName("graphai");

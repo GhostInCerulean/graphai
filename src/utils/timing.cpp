@@ -1,6 +1,7 @@
 #include "timing.hpp"
 
 #include <array>
+#include <iomanip>
 
 namespace graphai
 {

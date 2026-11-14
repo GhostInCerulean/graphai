@@ -93,6 +93,17 @@ if (APPLE)
             MACOSX_BUNDLE_ICON_FILE graphai.icns)
 endif ()
 
+if (ANDROID)
+    set_target_properties(graphai PROPERTIES
+            QT_ANDROID_PACKAGE_NAME "com.example.graphai"
+            QT_ANDROID_VERSION_CODE 1
+            QT_ANDROID_VERSION_NAME "1.0"
+            QT_ANDROID_APP_NAME "Graphai"
+            QT_ANDROID_APP_ICON "@drawable/icon"
+            QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packaging/android
+    )
+endif ()
+
 if (NOT ANDROID)
     include(GNUInstallDirs)
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(graphai VERSION 1.0.0 LANGUAGES CXX)
+project(graphai VERSION 1.0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -94,13 +94,16 @@ if (APPLE)
 endif ()
 
 if (ANDROID)
+    math(EXPR GRAPHAI_ANDROID_VERSION_CODE
+            "${PROJECT_VERSION_MAJOR} * 10000 + ${PROJECT_VERSION_MINOR} * 100 + ${PROJECT_VERSION_PATCH}")
+
     set_target_properties(graphai PROPERTIES
             QT_ANDROID_PACKAGE_NAME "com.example.graphai"
-            QT_ANDROID_VERSION_CODE 1
-            QT_ANDROID_VERSION_NAME "1.0"
+            QT_ANDROID_VERSION_CODE ${GRAPHAI_ANDROID_VERSION_CODE}
+            QT_ANDROID_VERSION_NAME "${PROJECT_VERSION}"
             QT_ANDROID_APP_NAME "Graphai"
             QT_ANDROID_APP_ICON "@drawable/icon"
-            QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packaging/android
+            QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/packaging/android"
     )
 endif ()
 

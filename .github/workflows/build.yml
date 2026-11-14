@@ -82,8 +82,16 @@ jobs:
           if-no-files-found: error
 
   android:
-    name: Android APK
+    name: Android APK (${{ matrix.abi }})
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - qt-arch: android_armv7
+            abi: armeabi-v7a
+          - qt-arch: android_arm64_v8a
+            abi: arm64-v8a
 
     steps:
       - uses: actions/checkout@v4
@@ -99,7 +107,7 @@ jobs:
           version: "6.8.3"
           host: all_os
           target: android
-          arch: android_armv7
+          arch: ${{ matrix.qt-arch }}
           cache: true
 
       - name: Set up Java
@@ -152,12 +160,12 @@ jobs:
             --ks-key-alias "$KEY_ALIAS" \
             --ks-pass env:KS_PASS \
             --key-pass env:KEY_PASS \
-            --out graphai-release.apk aligned.apk
-          "$BT/apksigner" verify graphai-release.apk
-
+            --out graphai-${{ matrix.abi }}.apk aligned.apk
+          "$BT/apksigner" verify graphai-${{ matrix.abi }}.apk
+          
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
-          name: graphai-android
-          path: graphai-release.apk
+          name: graphai-android-${{ matrix.abi }}
+          path: graphai-${{ matrix.abi }}.apk
           if-no-files-found: error

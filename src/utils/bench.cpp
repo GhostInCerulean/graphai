@@ -20,7 +20,7 @@ void measureFirstFrameTime(QGuiApplication &app, QQmlApplicationEngine &engine, 
             return;
 
         *reported = true;
-        qDebug().noquote().nospace() << "First frame time: " << timer.elapsed() << "ms";
+        qDebug().noquote().nospace() << "Time to first frame: " << timer.elapsed() << "ms";
     }, Qt::QueuedConnection);
 }
 } // namespace graphai

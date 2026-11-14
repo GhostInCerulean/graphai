@@ -1,0 +1,3 @@
+# dont count the 40k lines of CPM.cmake in project stats
+# i like flexing but i prefer being honest
+cmake/CPM.cmake linguist-vendored

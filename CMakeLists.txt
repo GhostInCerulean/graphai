@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(graphai VERSION 1.0.2 LANGUAGES CXX)
+project(graphai VERSION 1.0.3 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -115,19 +115,20 @@ if (NOT ANDROID)
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
-    qt_generate_deploy_qml_app_script(
-            TARGET graphai
-            OUTPUT_SCRIPT graphai_deploy_script
-    )
-    install(SCRIPT ${graphai_deploy_script})
+    # Bundle Qt only where there is no system Qt to depend on.
+    if (WIN32 OR APPLE)
+        qt_generate_deploy_qml_app_script(
+                TARGET graphai
+                OUTPUT_SCRIPT graphai_deploy_script
+        )
+        install(SCRIPT ${graphai_deploy_script})
+    endif ()
 
     set(CPACK_PACKAGE_NAME "Graphai")
     set(CPACK_PACKAGE_VENDOR "Graphai")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Graphai")
     set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "Graphai")
-
-    # Creates a Start Menu shortcut in the Windows NSIS installer.
     set(CPACK_PACKAGE_EXECUTABLES "graphai" "Graphai")
 
     if (WIN32)
@@ -138,21 +139,24 @@ if (NOT ANDROID)
         set(CPACK_GENERATOR "DragNDrop;TGZ")
     else ()
         set(CPACK_GENERATOR "DEB;RPM;TGZ")
+        set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+
+        install(FILES packaging/linux/graphai.desktop
+                DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+        install(FILES packaging/linux/graphai.svg
+                DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
 
         set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Graphai maintainers")
         set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
         set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+        # QML modules are loaded at runtime, so shlibdeps can't detect them.
+        # Adjust to match the imports in ui/Main.qml.
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS
+                "qml6-module-qtquick, qml6-module-qtquick-controls, qml6-module-qtquick-layouts, qml6-module-qtquick-window, qml6-module-qtqml-workerscript")
 
         set(CPACK_RPM_PACKAGE_LICENSE "Proprietary")
     endif ()
 
-    install(FILES packaging/linux/graphai.desktop
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-
-    install(FILES packaging/linux/graphai.svg
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
-
     set(CPACK_PACKAGE_DIRECTORY "${CMAKE_BINARY_DIR}/packages")
-    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
     include(CPack)
 endif ()

@@ -40,7 +40,7 @@ qt_add_executable(graphai
 
 if (ANDROID)
     set_target_properties(graphai PROPERTIES
-            QT_ANDROID_PACKAGE_NAME "com.example.graphai"
+            QT_ANDROID_PACKAGE_NAME "org.barbel.graphai"
             QT_ANDROID_VERSION_CODE 1
             QT_ANDROID_VERSION_NAME "1.0"
     )

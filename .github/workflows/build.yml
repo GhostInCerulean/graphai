@@ -58,6 +58,7 @@ jobs:
           target: desktop
           arch: ${{ matrix.qt-arch }}
           cache: true
+          modules: qtshadertools
 
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -109,6 +110,7 @@ jobs:
           target: android
           arch: ${{ matrix.qt-arch }}
           cache: true
+          modules: qtshadertools
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -223,6 +225,7 @@ jobs:
           target: desktop
           arch: clang_64
           cache: true
+          modules: qtshadertools
 
       - name: Remember host Qt path
         run: echo "QT_HOST_PATH=$QT_ROOT_DIR" >> "$GITHUB_ENV"
@@ -234,6 +237,7 @@ jobs:
           host: mac
           target: ios
           cache: true
+          modules: qtshadertools
 
       - name: Configure
         run: |

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
 project(graphai VERSION 1.0.3 LANGUAGES CXX)
 
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick Qml)
+qt_standard_project_setup(REQUIRES 6.8)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
@@ -12,9 +15,14 @@ CPMAddPackage(
         URL https://github.com/stephenberry/glaze/archive/refs/tags/v9.1.0.tar.gz
         VERSION 9.1.0
 )
-
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Qml)
-qt_standard_project_setup(REQUIRES 6.5)
+CPMAddPackage(
+        NAME HuskarUI
+        GITHUB_REPOSITORY mengps/HuskarUI
+        GIT_TAG v0.7.0.1-beta
+        GIT_SHALLOW TRUE
+        OPTIONS
+            "INSTALL_HUSKARUI_IN_DEFAULT_LOCATION OFF"
+)
 
 qt_add_executable(graphai
         src/main.cpp
@@ -69,6 +77,7 @@ qt_add_resources(graphai app_icon
 target_link_libraries(graphai PRIVATE
         Qt6::Quick
         glaze::glaze
+        HuskarUI::Basic
 )
 
 target_include_directories(graphai PRIVATE

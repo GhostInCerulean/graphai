@@ -46,10 +46,6 @@ if (ANDROID)
     )
 endif ()
 
-if(APPLE)
-    set_target_properties(graphai PROPERTIES MACOSX_BUNDLE TRUE)
-endif()
-
 qt_add_qml_module(graphai
         URI App
         VERSION 1.0
@@ -84,7 +80,8 @@ if (WIN32)
     set_target_properties(graphai PROPERTIES WIN32_EXECUTABLE TRUE)  # no console window
 endif ()
 
-if (APPLE)
+if (APPLE AND NOT IOS)
+    set_target_properties(graphai PROPERTIES MACOSX_BUNDLE TRUE)
     set(MACOSX_ICON ${CMAKE_CURRENT_SOURCE_DIR}/packaging/macos/graphai.icns)
     target_sources(graphai PRIVATE ${MACOSX_ICON})
     set_source_files_properties(${MACOSX_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
@@ -98,7 +95,7 @@ if (ANDROID)
             "${PROJECT_VERSION_MAJOR} * 10000 + ${PROJECT_VERSION_MINOR} * 100 + ${PROJECT_VERSION_PATCH}")
 
     set_target_properties(graphai PROPERTIES
-            QT_ANDROID_PACKAGE_NAME "com.example.graphai"
+            QT_ANDROID_PACKAGE_NAME "org.barbel.graphai"
             QT_ANDROID_VERSION_CODE ${GRAPHAI_ANDROID_VERSION_CODE}
             QT_ANDROID_VERSION_NAME "${PROJECT_VERSION}"
             QT_ANDROID_APP_NAME "Graphai"
@@ -107,7 +104,26 @@ if (ANDROID)
     )
 endif ()
 
-if (NOT ANDROID)
+if (IOS)
+    set_target_properties(graphai PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_GUI_IDENTIFIER "org.barbel.graphai"
+            MACOSX_BUNDLE_BUNDLE_NAME "Graphai"
+            MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+            MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.barbel.graphai"
+            XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"          # iPhone + iPad
+            XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "16.0"
+            XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
+    )
+
+    # iOS icons come from an asset catalog, not an .icns file.
+    set(IOS_ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/packaging/ios/Assets.xcassets)
+    target_sources(graphai PRIVATE ${IOS_ASSETS})
+    set_source_files_properties(${IOS_ASSETS} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+endif ()
+
+if (NOT ANDROID AND NOT IOS)
     include(GNUInstallDirs)
 
     install(TARGETS graphai

@@ -173,7 +173,7 @@ jobs:
   release:
     name: Publish GitHub release
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [desktop, android]
+    needs: [desktop, android, ios]
     runs-on: ubuntu-24.04
     permissions:
       contents: write   # the workflow-level default stays read-only
@@ -201,3 +201,60 @@ jobs:
           gh release create "$GITHUB_REF_NAME" dist/* \
             --title "$GITHUB_REF_NAME" \
             --generate-notes
+          
+
+  ios:
+    name: iOS
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install CMake 4
+        run: python -m pip install cmake==4.0.3
+
+      - name: Install Qt (macOS host tools)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.3"
+          host: mac
+          target: desktop
+          arch: clang_64
+          cache: true
+
+      - name: Remember host Qt path
+        run: echo "QT_HOST_PATH=$QT_ROOT_DIR" >> "$GITHUB_ENV"
+
+      - name: Install Qt for iOS
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.3"
+          host: mac
+          target: ios
+          cache: true
+
+      - name: Configure
+        run: |
+          "$QT_ROOT_DIR/bin/qt-cmake" \
+            -S . -B build-ios -G Xcode \
+            -DQT_HOST_PATH="$QT_HOST_PATH"
+
+      - name: Build (unsigned, device)
+        run: |
+          cmake --build build-ios --config Release --parallel -- \
+            -sdk iphoneos CODE_SIGNING_ALLOWED=NO
+
+      - name: Package unsigned IPA
+        run: |
+          mkdir Payload
+          cp -R build-ios/Release-iphoneos/graphai.app Payload/
+          zip -r graphai-ios-unsigned.ipa Payload
+
+      - name: Upload iOS IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: graphai-ios
+          path: graphai-ios-unsigned.ipa
+          if-no-files-found: error

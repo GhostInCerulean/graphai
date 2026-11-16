@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(graphai VERSION 1.0.3 LANGUAGES CXX)
+project(graphai VERSION 1.0.4 LANGUAGES CXX)
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS Quick Qml)
 qt_standard_project_setup(REQUIRES 6.8)
@@ -47,10 +47,26 @@ if (ANDROID)
 endif ()
 
 qt_add_qml_module(graphai
-        URI App
-        VERSION 1.0
+        URI
+            App
+        VERSION
+            1.0
         QML_FILES
-        ui/Main.qml
+            ui/AppMenu.qml
+            ui/AppMenuItem.qml
+            ui/AppMenuSeparator.qml
+            ui/BurgerButton.qml
+            ui/ChapterHeader.qml
+            ui/ChapterFooter.qml
+            ui/Main.qml
+            ui/MainMenu.qml
+            ui/PillCombo.qml
+            ui/PillField.qml
+            ui/ReadingView.qml
+            ui/TopBar.qml
+            ui/VerseDelegate.qml
+            ui/VerseMenu.qml
+            ui/VerseSelection.qml
 )
 
 qt_add_resources(graphai bible_data

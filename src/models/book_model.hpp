@@ -1,7 +1,7 @@
 #pragma once
 #include <QAbstractListModel>
 
-#include "bible.hpp"
+#include "../data/bible.hpp"
 
 class BookModel : public QAbstractListModel
 {

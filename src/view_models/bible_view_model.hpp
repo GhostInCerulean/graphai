@@ -1,9 +1,9 @@
 #include <QObject>
 #include <QQmlEngine>
 
-#include "bible.hpp"
-#include "book_model.hpp"
-#include "verse_model.hpp"
+#include "../data/bible.hpp"
+#include "../models/book_model.hpp"
+#include "../models/verse_model.hpp"
 
 class BibleViewModel : public QObject
 {

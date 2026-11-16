@@ -1,6 +1,6 @@
 #include "bible.hpp"
 
-#include "utils/scoped_timer.hpp"
+#include "../utils/scoped_timer.hpp"
 
 #include <QResource>
 #include <glaze/glaze.hpp>

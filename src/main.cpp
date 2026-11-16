@@ -1,10 +1,10 @@
 #include <QQuickWindow>
 
-#include "bible.hpp"
-#include "bible_view_model.hpp"
+#include "data/bible.hpp"
 #include "utils/bench.hpp"
 #include "utils/logging.hpp"
 #include "utils/windows.hpp"
+#include "view_models/bible_view_model.hpp"
 
 int main(int argc, char *argv[])
 {

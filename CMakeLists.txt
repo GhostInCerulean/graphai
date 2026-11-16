@@ -18,14 +18,14 @@ CPMAddPackage(
 
 qt_add_executable(graphai
         src/main.cpp
-        src/bible.cpp
-        src/bible.hpp
-        src/book_model.cpp
-        src/book_model.hpp
-        src/verse_model.cpp
-        src/verse_model.hpp
-        src/bible_view_model.cpp
-        src/bible_view_model.hpp
+        src/data/bible.cpp
+        src/data/bible.hpp
+        src/models/book_model.cpp
+        src/models/book_model.hpp
+        src/models/verse_model.cpp
+        src/models/verse_model.hpp
+        src/view_models/bible_view_model.cpp
+        src/view_models/bible_view_model.hpp
         src/utils/bench.cpp
         src/utils/bench.hpp
         src/utils/timing.cpp
@@ -36,6 +36,13 @@ qt_add_executable(graphai
         src/utils/windows.hpp
         src/utils/logging.cpp
         src/utils/logging.hpp
+        src/config/bookmark.cpp
+        src/config/bookmark.hpp
+        src/data/reference.hpp
+        src/config/user_data.cpp
+        src/config/user_data.hpp
+        src/config/last_session_info.cpp
+        src/config/last_session_info.hpp
 )
 
 if (ANDROID)
@@ -88,7 +95,7 @@ target_link_libraries(graphai PRIVATE
 )
 
 target_include_directories(graphai PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/view_models # for automoc to work
 )
 
 if (WIN32)

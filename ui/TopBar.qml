@@ -51,7 +51,7 @@ Pane {
         PillField {                              // reference bar: takes all remaining width
             Layout.fillWidth: true
             Layout.minimumWidth: 80
-            placeholderText: "Go to… (e.g. john 2)"
+            placeholderText: "Go to..."
             onAccepted: root.referenceSubmitted(text)
         }
     }

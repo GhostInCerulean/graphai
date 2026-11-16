@@ -1,6 +1,3 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QElapsedTimer>
 #include <QQuickWindow>
 
 #include "bible.hpp"
@@ -24,8 +21,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setWindowIcon(QIcon(":/icons/icon.png"));
     QGuiApplication::setDesktopFileName("graphai");
 
-    QQmlApplicationEngine engine;
-    QObject::connect(
+    QQmlApplicationEngine engine;QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, [] { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
@@ -33,7 +29,6 @@ int main(int argc, char *argv[])
     auto vm = BibleViewModel(bible);
 
     engine.setInitialProperties({{"bible", QVariant::fromValue(&vm)}});
-
     engine.loadFromModule("App", "Main");
 
     graphai::measureFirstFrameTime(app, engine, timer);

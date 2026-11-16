@@ -15,14 +15,6 @@ CPMAddPackage(
         URL https://github.com/stephenberry/glaze/archive/refs/tags/v9.1.0.tar.gz
         VERSION 9.1.0
 )
-CPMAddPackage(
-        NAME HuskarUI
-        GITHUB_REPOSITORY mengps/HuskarUI
-        GIT_TAG v0.7.0.1-beta
-        GIT_SHALLOW TRUE
-        OPTIONS
-            "INSTALL_HUSKARUI_IN_DEFAULT_LOCATION OFF"
-)
 
 qt_add_executable(graphai
         src/main.cpp
@@ -77,7 +69,6 @@ qt_add_resources(graphai app_icon
 target_link_libraries(graphai PRIVATE
         Qt6::Quick
         glaze::glaze
-        HuskarUI::Basic
 )
 
 target_include_directories(graphai PRIVATE

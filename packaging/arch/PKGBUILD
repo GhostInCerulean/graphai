@@ -1,0 +1,41 @@
+# Maintainer: Graphai maintainers
+#
+# Builds from the surrounding source tree (packaging/arch/../..), so it can run
+# in CI straight from a checkout. Override the location with GRAPHAI_SRC=/path.
+pkgname=graphai
+pkgver=1.0.4
+pkgrel=1
+pkgdesc='Graphai, a Qt 6 / QML Bible reader'
+arch=('x86_64' 'aarch64')
+url='https://github.com/OWNER/graphai'   # TODO: set the real URL
+license=('custom')
+depends=('qt6-base' 'qt6-declarative')
+makedepends=('cmake' 'ninja' 'qt6-shadertools')
+options=('!lto')   # CMakeLists.txt already enables IPO for Release
+_glaze=9.1.0
+source=("glaze-${_glaze}.tar.gz::https://github.com/stephenberry/glaze/archive/refs/tags/v${_glaze}.tar.gz")
+sha256sums=('SKIP')   # run `updpkgsums` before publishing to the AUR
+
+_root() { realpath "${GRAPHAI_SRC:-$startdir/../..}"; }
+
+pkgver() {
+    # Keep pkgver in sync with project(graphai VERSION x.y.z ...)
+    grep -oP 'project\(graphai VERSION \K[0-9.]+' "$(_root)/CMakeLists.txt"
+}
+
+build() {
+    # CPM_glaze_SOURCE makes CPM use the tarball from source=() instead of
+    # downloading during the build.
+    cmake -S "$(_root)" -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCPM_glaze_SOURCE="$srcdir/glaze-${_glaze}" \
+        -Wno-dev
+    cmake --build build
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+    # Don't ship the header-only glaze dependency if its install rules ran.
+    rm -rf "$pkgdir"/usr/include "$pkgdir"/usr/lib/cmake "$pkgdir"/usr/share/glaze
+}
